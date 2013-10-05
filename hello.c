@@ -1,26 +1,37 @@
 #include <stdio.h>
 #include <inttypes.h>
-
-#define READ_COUNTER_ADDR 0x40050000
+#include <fcntl.h>
+#include <unistd.h>
 
 int32_t *read_counter = (int32_t *) READ_COUNTER_ADDR;
 int main(void)
 {
-	printf("This is a test program for QEMU counter device\n");
-	printf("See http://github.com/krasin/qemu-counter for more details\n\n");
-	printf("Let's check if the Read Counter device presented\n");
-	for (int i = 0; i < 10; i++) {
-		printf("The device has been accessed for %"PRId32" times!\n", *read_counter);
-	}
-	int32_t now = *read_counter;
-	if (now == 0) {
-		printf("ERROR - No Read Counter detected\n");
-	}
-	else if (now == 11) {
-		printf("OK - Read Counter works as intended\n");
-	}
-	else {
-		printf("ERROR - Something is wrong with Read Counter\n");
-	}
+	FILE* file;
+    	char str[50];
+	char buf[50];
+
+    	file=fopen("file_io.txt","w");
+    	if(file==NULL){
+        	printf("read file error!\n\r");
+        	return 0;
+    	}
+	
+	printf("enter the words you want to write into file:\n\r");
+	scanf("%s",str);
+   	printf("the string \"%s\" has written into the file\n\r",str);
+    	fprintf(file,"%s",&str);
+    	fclose(file);
+
+
+    	file=fopen("file_io.txt", "r");
+    	if(file==NULL){
+        	printf("read file error!\n\r");
+        	return 0;
+    	}
+
+    	fread(buf,sizeof(buf),1,file);
+    	printf("\"%s\" is read from the file\n\r",buf);
+    	fclose(file);
+
 	return 0;
 }
